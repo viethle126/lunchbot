@@ -1,0 +1,33 @@
+{
+  "name": "lunchbot",
+  "version": "1.0.0",
+  "description": "this is a terrible idea",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/viethle126/lunchbot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viethle126/lunchbot/issues"
+  },
+  "homepage": "https://github.com/viethle126/lunchbot#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "chai": "^3.5.0",
+    "cheerio": "^0.20.0",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.16",
+    "request": "^2.72.0"
+  }
+}
