@@ -9,7 +9,7 @@ var devUrl = 'http://irvine.eat24hours.com/bb-vietnamese/49992';
 function menu($, array) {
   $('[itemtype="http://schema.org/MenuSection"]').each(function(i, category) {
     var name = $('[itemprop="name"]', category).html();
-    array.push('Category: ' + name.replace('$apos;', '\''));
+    array.push('Category: ' + name.replace('&apos;', '\''));
     item($, category, array);
   })
   return array;
