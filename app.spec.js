@@ -12,6 +12,7 @@ var port = server.address().port;
 // search
 describe('Get request to /search', function() {
   it('is returning an array of restaurants', function(done) {
+    this.timeout(10000);
     request('http://localhost:' + port + '/search',
       function(error, response, body) {
         var parsed = JSON.parse(body);
