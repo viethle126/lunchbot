@@ -30,8 +30,14 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
 
     promise.then(function(payload) {
       qResults = payload;
-      var response = payload.results.join('\n');
-      bot.reply(message, response);
+      if (payload.results.length === 0) {
+        var response = 'I couldn\'t find any ' + message.match[1] + ' near ' + message.match[2]
+        bot.reply(message, response);
+      } else {
+        var response = payload.results.join('\n');
+        bot.reply(message, response);
+      }
+
     })
   })
 
