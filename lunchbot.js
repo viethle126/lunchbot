@@ -37,7 +37,6 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
         var response = payload.results.join('\n');
         bot.reply(message, response);
       }
-
     })
   })
 

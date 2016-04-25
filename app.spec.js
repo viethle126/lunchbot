@@ -8,12 +8,24 @@ var app = require('./app.js');
 var RANDOMIZE = 0;
 var server = app.listen(RANDOMIZE);
 var port = server.address().port;
+var url = 'http://localhost:' + port
 
+// uptime
+describe('Get request to /uptime', function() {
+  it('is returning a response', function(done) {
+    request(url + '/uptime',
+      function(error, response, body) {
+        assert.equal(error, null);
+        assert.equal(response.statusCode, 200);
+        done();
+    })
+  })
+})
 // search
 describe('Get request to /search', function() {
   it('is returning an array of restaurants', function(done) {
     this.timeout(10000);
-    request('http://localhost:' + port + '/search',
+    request(url + '/search',
       function(error, response, body) {
         var parsed = JSON.parse(body);
         assert.equal(error, null);
@@ -25,7 +37,7 @@ describe('Get request to /search', function() {
 // menu
 describe('Get request to /menu', function() {
   it('is returning an array of items', function(done) {
-    request('http://localhost:' + port + '/menu',
+    request(url + '/menu',
       function(error, response, body) {
         var parsed = JSON.parse(body);
         assert.equal(error, null);
