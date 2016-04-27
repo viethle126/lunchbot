@@ -83,29 +83,29 @@ controller.hears(['menu for (.*)'],
     }
   })
 
-  controller.hears(['menu next'],
-    context.general, function(bot, message) {
-      qMenu.sent++
-      var remaining = qMenu.total - qMenu.sent;
-      var header = 'There are ' + remaining + ' categories left. Say *\'menu next\'* for more.\n';
-      var section = qMenu.sections[qMenu.sent].join('\n');
-      var response = header + section;
-      bot.reply(message, response);
-    })
+controller.hears(['menu next'],
+  context.general, function(bot, message) {
+    qMenu.sent++
+    var remaining = qMenu.total - qMenu.sent;
+    var header = 'There are ' + remaining + ' categories left. Say *\'menu next\'* for more.\n';
+    var section = qMenu.sections[qMenu.sent].join('\n');
+    var response = header + section;
+    bot.reply(message, response);
+  })
 
-    controller.hears(['info (.*)'],
-      context.general, function(bot, message) {
-        var restaurant = match(message.match[1]);
-        if (restaurant === false) {
-          bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
-        } else {
-          var name = '*' + restaurant.name + '*';
-          var phone = 'Phone: ' + restaurant.phone;
-          var address = 'Address: ' + restaurant.address;
-          var response = name + '\n' + phone + '\n' + address;
-          bot.reply(message, response);
-        }
-      })
+controller.hears(['info (.*)'],
+  context.general, function(bot, message) {
+    var restaurant = match(message.match[1]);
+    if (restaurant === false) {
+      bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+    } else {
+      var name = '*' + restaurant.name + '*';
+      var phone = 'Phone: ' + restaurant.phone;
+      var address = 'Address: ' + restaurant.address;
+      var response = name + '\n' + phone + '\n' + address;
+      bot.reply(message, response);
+    }
+  })
 
 bot.startRTM(function(err, bot, payload) {
   if (!err) { console.log('@lunchbot has connected to Slack') }
