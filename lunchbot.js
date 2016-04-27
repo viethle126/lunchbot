@@ -86,6 +86,17 @@ controller.hears(['reviews for (.*)'],
     }
   })
 
+controller.hears(['more reviews'],
+  context.general, function(bot, message) {
+    var index = qReviews.sent
+    qReviews.sent++
+    var remaining = qReviews.total - qReviews.sent;
+    var header = 'Review ' + qReviews.sent + ' of ' + remaining + '. Say *\'more reviews\'* for more.\n';
+    var review = '*' + qReviews.reviews[index].author + '* says:\n' + qReviews.reviews[index].content
+    var response = header + review;
+    bot.reply(message, response);
+  })
+
 controller.hears(['menu for (.*)'],
   context.general, function(bot, message) {
     var restaurant = match(message.match[1]);
