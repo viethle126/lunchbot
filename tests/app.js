@@ -3,12 +3,22 @@ var express = require('express');
 var app = express();
 // routes
 var menu = require('../lib/menu');
+var reviews = require('../lib/reviews');
 var search = require('../lib/search');
 var uptime = require('../lib/uptime');
 
 app.use('/menu', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
     menu(promise, resolve, reject, 'http://irvine.eat24hours.com/gina-s-pizza-pastaria/43934');
+  })
+  promise.then(function(payload) {
+    res.send(payload);
+  })
+})
+
+app.use('/reviews', function(req, res) {
+  var promise = new Promise(function(resolve, reject) {
+    reviews(promise, resolve, reject, 'https://www.yelp.com/biz/ginas-pizza-and-pastaria-irvine');
   })
   promise.then(function(payload) {
     res.send(payload);

@@ -6,11 +6,13 @@ var bot = controller.spawn({
 })
 // custom modules
 var menu = require('./lib/menu');
+var reviews = require('./lib/reviews');
 var search = require('./lib/search');
 var uptime = require('./lib/uptime');
 
 var qResults = ''; // temporarily storing data, will implement mongodb later
 var qMenu = ''; // temporarily storing data, will implement mongodb later
+var qReviews = ''; // temporarily storing data, will implement mongodb later
 var context = {
   dm: ['direct_message'],
   all: ['direct_message', 'direct_mention', 'mention', 'ambient'],
@@ -56,6 +58,43 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
         bot.reply(message, response);
       }
     })
+  })
+
+controller.hears(['reviews for (.*)'],
+  context.general, function(bot, message) {
+    var restaurant = match(message.match[1]);
+    if (restaurant === false) {
+      bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+    } else {
+      var promise = new Promise(function(resolve, reject) {
+        reviews(promise, resolve, reject, restaurant.url);
+      })
+
+      promise.then(function(payload) {
+        var total = payload.reviews.length + 1
+        qReviews = {
+          sent: 0,
+          total: total,
+          reviews: payload.reviews
+        }
+        var header = 'I retrieved *' + total + ' reviews*. Here are the highlights. Say *\'more reviews\'* for full reviews.\n- ';
+        var highlights = payload.highlights.join('\n- ');
+        highlights = highlights.replace(/in (.*) reviews/g, '*_$&_*');
+        var response = header + highlights;
+        bot.reply(message, response);
+      })
+    }
+  })
+
+controller.hears(['more reviews'],
+  context.general, function(bot, message) {
+    var index = qReviews.sent
+    qReviews.sent++
+    var remaining = qReviews.total - qReviews.sent;
+    var header = 'Review ' + qReviews.sent + ' of ' + remaining + '. Say *\'more reviews\'* for more.\n';
+    var review = '*' + qReviews.reviews[index].author + '* says:\n' + qReviews.reviews[index].content
+    var response = header + review;
+    bot.reply(message, response);
   })
 
 controller.hears(['menu for (.*)'],
