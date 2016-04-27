@@ -68,19 +68,29 @@ controller.hears(['menu for (.*)'],
       })
 
       promise.then(function(payload) {
-        var total = payload.length;
+        var total = payload.length + 1;
         qMenu = {
           sent: 0,
           total: total,
           sections: payload
         }
-        var header = 'I found ' + total + ' categories. Say \'menu next\' for more.\n'
+        var header = 'I found ' + total + ' categories. Say \'**menu next**\' for more.\n';
         var section = payload[0].join('\n');
         var response = header + section;
         bot.reply(message, response);
       })
     }
   })
+
+  controller.hears(['menu next'],
+    context.general, function(bot, message) {
+      qMenu.sent++
+      var remaining = qMenu.total - qMenu.sent;
+      var header = 'There are ' + remaining + ' categories left. Say \'**menu next**\' for more.\n';
+      var section = qMenu.sections[qMenu.sent].join('\n');
+      var response = header + section;
+      bot.reply(message, response);
+    })
 
 bot.startRTM(function(err, bot, payload) {
   if (!err) { console.log('@lunchbot has connected to Slack') }
