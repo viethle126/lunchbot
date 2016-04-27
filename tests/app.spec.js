@@ -34,6 +34,20 @@ describe('Get request to /search', function() {
     })
   })
 })
+// reviews
+describe('Get request to /reviews', function() {
+  it('is returning an object containing highlights and reviews', function(done) {
+    this.timeout(10000);
+    request(url + '/reviews',
+      function(error, response, body) {
+        var parsed = JSON.parse(body);
+        assert.equal(error, null);
+        assert.notEqual(parsed.highlights.length, 0);
+        assert.notEqual(parsed.reviews.length, 0);
+        done();
+    })
+  })
+})
 // menu
 describe('Get request to /menu', function() {
   it('is returning an array of items', function(done) {
