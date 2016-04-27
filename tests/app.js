@@ -2,9 +2,9 @@
 var express = require('express');
 var app = express();
 // routes
-var menu = require('./lib/menu');
-var search = require('./lib/search');
-var uptime = require('./lib/uptime');
+var menu = require('../lib/menu');
+var search = require('../lib/search');
+var uptime = require('../lib/uptime');
 
 app.use('/menu', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
