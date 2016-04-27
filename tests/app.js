@@ -1,14 +1,19 @@
 // @lunchbot-dev: Mocha/Travis Testing
 var express = require('express');
 var app = express();
-var jSonParser = require('body-parser').json();
 // routes
-var menu = require('./lib/menu');
-var search = require('./lib/search');
-var uptime = require('./lib/uptime');
+var menu = require('../lib/menu');
+var search = require('../lib/search');
+var uptime = require('../lib/uptime');
 
-app.use(jSonParser);
-app.use('/menu', menu);
+app.use('/menu', function(req, res) {
+  var promise = new Promise(function(resolve, reject) {
+    menu(promise, resolve, reject, 'http://irvine.eat24hours.com/gina-s-pizza-pastaria/43934');
+  })
+  promise.then(function(payload) {
+    res.send(payload);
+  })
+})
 
 app.get('/search', function(req, res) {
   var promise = new Promise(function(resolve, reject) {

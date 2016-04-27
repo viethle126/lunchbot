@@ -3,7 +3,7 @@ var mocha = require('gulp-mocha');
 var eslint = require('gulp-eslint');
 var nodemon = require('gulp-nodemon');
 
-var app = require('./app.js');
+var app = require('./tests/app.js');
 var server = '';
 
 gulp.task('start', function() {
@@ -11,14 +11,14 @@ gulp.task('start', function() {
 })
 
 gulp.task('lint', ['start'], function() {
-  return gulp.src(['app.js', '!node_modules/**'])
+  return gulp.src(['tests/app.js', '!node_modules/**'])
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError())
 })
 
 gulp.task('mocha', ['lint'], function () {
-  return gulp.src('app.spec.js')
+  return gulp.src('tests/app.spec.js')
   .pipe(mocha())
 })
 
