@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var eslint = require('gulp-eslint');
-var nodemon = require('gulp-nodemon');
 
 var app = require('./tests/app.js');
 var server = '';
@@ -26,7 +25,4 @@ gulp.task('test', ['mocha'], function() {
   server.close();
 })
 
-gulp.task('default', ['mocha'], function() {
-  server.close();
-  nodemon({ script: 'app.js' })
-})
+gulp.task('default', ['test']);
