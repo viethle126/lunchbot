@@ -105,28 +105,29 @@ controller.hears(['more results'],
 
 controller.hears(['reviews for (.*)'],
   context.general, function(bot, message) {
-    var restaurant = match(message.match[1]);
-    if (restaurant === false) {
-      bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
-    } else {
-      var promise = new Promise(function(resolve, reject) {
-        reviews(promise, resolve, reject, restaurant.url);
-      })
+    var requestRestaurants = new Promise(function(resolve, reject) {
+      Channel.getRestaurants(message, requestRestaurants, resolve, reject);
+    })
 
-      promise.then(function(payload) {
-        var total = payload.reviews.length + 1
-        qReviews = {
-          sent: 0,
-          total: total,
-          reviews: payload.reviews
-        }
-        var header = 'I retrieved *' + total + ' reviews*. Here are the highlights. Say *\'more reviews\'* for full reviews.\n- ';
-        var highlights = payload.highlights.join('\n- ');
-        highlights = highlights.replace(/in (.*) reviews/g, '*_$&_*');
-        var response = header + highlights;
-        bot.reply(message, response);
-      })
-    }
+    requestRestaurants.then(function(results) {
+      var restaurant = match(message.match[1], results);
+      if (restaurant === false) {
+        bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else {
+        var scrapeReviews = new Promise(function(resolve, reject) {
+          reviews(scrapeReviews, resolve, reject, restaurant.url);
+        })
+
+        scrapeReviews.then(function(payload) {
+          var total = payload.reviews.length;
+          var header = 'I retrieved *' + total + ' reviews*. Here are the highlights. Say *\'more reviews\'* for full reviews.\n- ';
+          var highlights = payload.highlights.join('\n- ');
+          var response = header + highlights;
+          bot.reply(message, response);
+          Channel.reviews(message, payload);
+        })
+      }
+    })
   })
 
 controller.hears(['more reviews'],
