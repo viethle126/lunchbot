@@ -9,6 +9,20 @@ var menu = require('./lib/menu');
 var reviews = require('./lib/reviews');
 var search = require('./lib/search');
 var uptime = require('./lib/uptime');
+// mongoose
+var mongoose = require('./lib/mongoose');
+var Channel = require('./lib/channel');
+var User = require('./lib/user');
+var db = mongoose.connection;
+// connect to database; start lunchbot
+db.on('error', console.error.bind(console, 'Connection error:'));
+db.once('open', function() {
+  console.log('@lunchbot has connected to the database')
+  bot.startRTM(function(err, bot, payload) {
+    if (!err) { console.log('@lunchbot has connected to Slack') }
+    else { throw new Error('Could not connect to Slack') }
+  })
+});
 
 var qResults = ''; // temporarily storing data, will implement mongodb later
 var qMenu = ''; // temporarily storing data, will implement mongodb later
@@ -44,6 +58,8 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 
 controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) near (.*)'],
   context.general, function(bot, message) {
+    User.search(message);
+
     var promise = new Promise(function(resolve, reject) {
       search(promise, resolve, reject, message.match[1], message.match[2]);
     })
@@ -56,6 +72,7 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
       } else {
         var response = payload.results.join('\n');
         bot.reply(message, response);
+        Channel.search(message, payload);
       }
     })
   })
@@ -145,8 +162,3 @@ controller.hears(['info (.*)'],
       bot.reply(message, response);
     }
   })
-
-bot.startRTM(function(err, bot, payload) {
-  if (!err) { console.log('@lunchbot has connected to Slack') }
-  else { throw new Error('Could not connect to Slack') }
-})
