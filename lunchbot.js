@@ -24,9 +24,6 @@ db.once('open', function() {
   })
 });
 
-var qResults = ''; // temporarily storing data, will implement mongodb later
-var qMenu = ''; // temporarily storing data, will implement mongodb later
-var qReviews = ''; // temporarily storing data, will implement mongodb later
 var context = {
   dm: ['direct_message'],
   all: ['direct_message', 'direct_mention', 'mention', 'ambient'],
@@ -160,7 +157,7 @@ controller.hears(['menu for (.*)'],
 
         scrapeMenu.then(function(payload) {
           var total = payload.length;
-          var header = 'I found ' + total + ' categories. Say *\'menu next\'* for more.\n';
+          var header = 'The menu has ' + total + ' categories. Say *\'menu next\'* for more.\n';
           var section = payload[0].join('\n');
           var response = header + section;
           bot.reply(message, response);
@@ -172,12 +169,26 @@ controller.hears(['menu for (.*)'],
 
 controller.hears(['menu next'],
   context.general, function(bot, message) {
-    qMenu.sent++
-    var remaining = qMenu.total - qMenu.sent;
-    var header = 'There are ' + remaining + ' categories left. Say *\'menu next\'* for more.\n';
-    var section = qMenu.sections[qMenu.sent].join('\n');
-    var response = header + section;
-    bot.reply(message, response);
+    var promise = new Promise(function(resolve, reject) {
+      Channel.moreMenu(message, promise, resolve, reject)
+    })
+
+    promise.then(function(payload) {
+      var header, category;
+      var left = payload.left <= 0 ? 0 : payload.left;
+      if (left === 0) {
+        header = 'There are *no categories* remaining.\n'
+      } else {
+        header = 'There are *' + left + ' categories left*. Say *\'menu next\'* for more.\n';
+      }
+      if (payload.menu[payload.sent - 1]) {
+        category = payload.menu[payload.sent - 1].join('\n');
+      } else {
+        category = '';
+      }
+      var response = header + category;
+      bot.reply(message, response);
+    })
   })
 
 controller.hears(['info (.*)'],
