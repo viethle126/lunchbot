@@ -70,10 +70,39 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
         var response = 'I couldn\'t find any ' + message.match[1] + ' near ' + message.match[2]
         bot.reply(message, response);
       } else {
-        var response = payload.results.join('\n');
+        var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
+        var results = payload.results.slice(0, 5).join('\n');
+        var response = header + results;
         bot.reply(message, response);
         Channel.search(message, payload);
       }
+    })
+  })
+
+controller.hears(['more results'],
+  context.general, function(bot, message) {
+    var promise = new Promise(function(resolve, reject) {
+      Channel.more(message, promise, resolve, reject)
+    })
+
+    promise.then(function(payload) {
+      var header;
+      var left = payload.left <= 0 ? 0 : payload.left;
+      if (left === 0) {
+        header = 'There are *no results* remaining.\n'
+      } else {
+        header = 'There are *' + left + ' results left*. Say *\'more results\'* for more.\n';
+      }
+      var end = payload.sent * 5;
+      var start = end - 5;
+      var results;
+      if (end > payload.results.length) {
+        results = payload.results.slice(start).join('\n');
+      } else {
+        results = payload.results.slice(start, end).join('\n');
+      }
+      var response = header + results;
+      bot.reply(message, response);
     })
   })
 
