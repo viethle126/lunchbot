@@ -33,14 +33,14 @@ var context = {
   general: ['direct_message', 'direct_mention', 'mention']
 }
 
-function match(input) {
-  var ref = Number(input);
-  var name = input;
+function match(query, results) {
+  var byIndex = Number(query);
+  var byName = query;
   var found = false;
-  var restaurant = {};
+  var restaurant;
 
-  qResults.restaurants.forEach(function(element, index, array) {
-    if (element.ref === ref || element.name.toLowerCase() === name.toLowerCase()) {
+  results[0].search.restaurants.forEach(function(element, index, array) {
+    if (element.ref === byIndex || element.name.toLowerCase() === byName.toLowerCase()) {
       found = true;
       restaurant = element;
     }
@@ -82,7 +82,7 @@ controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) nea
 controller.hears(['more results'],
   context.general, function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      Channel.more(message, promise, resolve, reject)
+      Channel.moreResults(message, promise, resolve, reject)
     })
 
     promise.then(function(payload) {
@@ -145,27 +145,29 @@ controller.hears(['more reviews'],
 
 controller.hears(['menu for (.*)'],
   context.general, function(bot, message) {
-    var restaurant = match(message.match[1]);
-    if (restaurant === false) {
-      bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
-    } else {
-      var promise = new Promise(function(resolve, reject) {
-        menu(promise, resolve, reject, restaurant.eat24);
-      })
+    var requestRestaurants = new Promise(function(resolve, reject) {
+      Channel.getRestaurants(message, requestRestaurants, resolve, reject);
+    })
 
-      promise.then(function(payload) {
-        var total = payload.length + 1;
-        qMenu = {
-          sent: 0,
-          total: total,
-          sections: payload
-        }
-        var header = 'I found ' + total + ' categories. Say *\'menu next\'* for more.\n';
-        var section = payload[0].join('\n');
-        var response = header + section;
-        bot.reply(message, response);
-      })
-    }
+    requestRestaurants.then(function(results) {
+      var restaurant = match(message.match[1], results);
+      if (restaurant === false) {
+        bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else {
+        var scrapeMenu = new Promise(function(resolve, reject) {
+          menu(scrapeMenu, resolve, reject, restaurant.eat24);
+        })
+
+        scrapeMenu.then(function(payload) {
+          var total = payload.length;
+          var header = 'I found ' + total + ' categories. Say *\'menu next\'* for more.\n';
+          var section = payload[0].join('\n');
+          var response = header + section;
+          bot.reply(message, response);
+          Channel.menu(message, payload);
+        })
+      }
+    })
   })
 
 controller.hears(['menu next'],
