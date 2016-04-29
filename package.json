@@ -1,10 +1,10 @@
 {
   "name": "lunchbot",
   "version": "1.0.0",
-  "description": "this is a terrible idea",
+  "description": "a Yelp-centric Slack bot",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node lunchbot.js"
   },
   "repository": {
     "type": "git",
@@ -19,18 +19,15 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
-    "gulp-mocha": "^2.2.0",
-    "gulp-nodemon": "^2.0.6"
+    "gulp-mocha": "^2.2.0"
   },
   "dependencies": {
-    "body-parser": "^1.15.0",
     "botkit": "^0.1.1",
     "chai": "^3.5.0",
     "cheerio": "^0.20.0",
     "express": "^4.13.4",
-    "mongodb": "^2.1.16",
+    "mongoose": "^4.4.14",
     "oauth": "^0.9.14",
-    "request": "^2.72.0",
-    "underscore": "^1.8.3"
+    "request": "^2.72.0"
   }
 }

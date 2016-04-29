@@ -1,6 +1,3 @@
-//var mongoClient = require('mongodb').MongoClient;
-//var ObjectId = require('mongodb').ObjectID;
-//var url = 'mongodb://localhost/lunchbot';
 var assert = require('chai').assert;
 var request = require('request');
 
