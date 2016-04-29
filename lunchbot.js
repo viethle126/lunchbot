@@ -208,14 +208,20 @@ controller.hears(['menu next'],
 
 controller.hears(['info (.*)'],
   context.general, function(bot, message) {
-    var restaurant = match(message.match[1]);
-    if (restaurant === false) {
-      bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
-    } else {
-      var name = '*' + restaurant.name + '*';
-      var phone = 'Phone: ' + restaurant.phone;
-      var address = 'Address: ' + restaurant.address;
-      var response = name + '\n' + phone + '\n' + address;
-      bot.reply(message, response);
-    }
+    var promise = new Promise(function(resolve, reject) {
+      Channel.getRestaurants(message, promise, resolve, reject);
+    })
+
+    promise.then(function(results) {
+      var restaurant = match(message.match[1], results);
+      if (restaurant === false) {
+        bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else {
+        var name = '*' + restaurant.name + '*';
+        var phone = 'Phone: ' + restaurant.phone;
+        var address = 'Address: ' + restaurant.address;
+        var response = name + '\n' + phone + '\n' + address;
+        bot.reply(message, response);
+      }
+    })
   })
