@@ -132,13 +132,27 @@ controller.hears(['reviews for (.*)'],
 
 controller.hears(['more reviews'],
   context.general, function(bot, message) {
-    var index = qReviews.sent
-    qReviews.sent++
-    var remaining = qReviews.total - qReviews.sent;
-    var header = 'Review ' + qReviews.sent + ' of ' + remaining + '. Say *\'more reviews\'* for more.\n';
-    var review = '*' + qReviews.reviews[index].author + '* says:\n' + qReviews.reviews[index].content
-    var response = header + review;
-    bot.reply(message, response);
+    var promise = new Promise(function(resolve, reject) {
+      Channel.moreReviews(message, promise, resolve, reject)
+    })
+
+    promise.then(function(payload) {
+      var index = payload.sent - 1;
+      var left = payload.left <= 0 ? 0 : payload.left;
+      var header, review;
+      if (left === 0) {
+        header = 'There are *no reviews* remaining.\n'
+      } else {
+        header = 'Review ' + payload.sent + ' of ' + payload.total + '. Say *\'more reviews\'* for more.\n';
+      }
+      if (payload.sent <= payload.total) {
+        review = '*' + payload.reviews[index].author + '* says:\n' + payload.reviews[index].content;
+      } else {
+        review = '';
+      }
+      var response = header + review;
+      bot.reply(message, response);
+    })
   })
 
 controller.hears(['menu for (.*)'],
