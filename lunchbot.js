@@ -53,6 +53,18 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
     bot.reply(message, reply);
   })
 
+controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
+  context.general, function(bot, message) {
+    var promise = new Promise(function(resolve, reject) {
+      User.setLocation(promise, resolve, reject, message);
+    })
+
+    promise.then(function() {
+      var response = 'Your default location has been set to: ' + message.match[1];
+      bot.reply(message, response);
+    })
+  })
+
 controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) near (.*)'],
   context.general, function(bot, message) {
     User.search(message);
