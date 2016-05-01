@@ -30,6 +30,32 @@ var context = {
   general: ['direct_message', 'direct_mention', 'mention']
 }
 
+function configSearch(message, promise, resolve, reject) {
+  if (message.text.match(/search (.*) near (.*)/) === null) {
+    var find = new Promise(function(findResolve, findReject) {
+      User.getLocation(message, find, findResolve, findReject);
+    })
+
+    find.then(function(results) {
+      if (results.length === 0) {
+        resolve('Please specify a location <*search* tacos *near* Irvine, CA> or set your default location <*set default* your location>');
+      }
+      var config = {
+        query: message.match[1],
+        location: results[0].location
+      }
+      resolve(config);
+    })
+  } else {
+    var text = message.text.match(/search (.*) near (.*)/);
+    var config = {
+      query: text[1],
+      location: text[2]
+    }
+    resolve(config);
+  }
+}
+
 function match(query, results) {
   var byIndex = Number(query);
   var byName = query;
@@ -53,26 +79,45 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
     bot.reply(message, reply);
   })
 
-controller.hears(['search (.*) near (.*)', 'find (.*) near (.*)', 'list (.*) near (.*)'],
+controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
   context.general, function(bot, message) {
-    User.search(message);
-
     var promise = new Promise(function(resolve, reject) {
-      search(promise, resolve, reject, message.match[1], message.match[2]);
+      User.putLocation(promise, resolve, reject, message);
     })
 
-    promise.then(function(payload) {
-      qResults = payload;
-      if (payload.results.length === 0) {
-        var response = 'I couldn\'t find any ' + message.match[1] + ' near ' + message.match[2]
-        bot.reply(message, response);
-      } else {
-        var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
-        var results = payload.results.slice(0, 5).join('\n');
-        var response = header + results;
-        bot.reply(message, response);
-        Channel.search(message, payload);
+    promise.then(function() {
+      var response = 'Your default location has been set to: ' + message.match[1];
+      bot.reply(message, response);
+    })
+  })
+
+controller.hears(['search (.*)', 'find (.*)'],
+  context.general, function(bot, message) {
+    var getLocation = new Promise(function(resolve, reject) {
+      configSearch(message, getLocation, resolve, reject);
+    })
+
+    getLocation.then(function(results) {
+      if (typeof results === 'string') {
+        bot.reply(message, results);
       }
+      User.search(message, results);
+      var goSearch = new Promise(function(resolveSearch, rejectSearch) {
+        search(goSearch, resolveSearch, rejectSearch, results.query, results.location);
+      })
+
+      goSearch.then(function(payload) {
+        if (payload.results.length === 0) {
+          var response = 'I couldn\'t find any ' + results.query + ' near ' + results.location;
+          bot.reply(message, response);
+        } else {
+          var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
+          var results = payload.results.slice(0, 5).join('\n');
+          var response = header + results;
+          bot.reply(message, response);
+          Channel.search(message, payload);
+        }
+      })
     })
   })
 
