@@ -41,13 +41,13 @@ function configSearch(message, promise, resolve, reject) {
         resolve('Please specify a location <*search* tacos *near* Irvine, CA> or set your default location <*set default* your location>');
       }
       var config = {
-        query: message.match[1].replace(/--save/, ''),
+        query: message.match[1].replace(/-all/, ''),
         location: results[0].location
       }
       resolve(config);
     })
   } else {
-    var text = message.text.replace(/--save/, '').match(/search (.*) near (.*)/);
+    var text = message.text.replace(/-all/, '').match(/search (.*) near (.*)/);
     var config = {
       query: text[1],
       location: text[2]
