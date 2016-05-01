@@ -41,13 +41,13 @@ function configSearch(message, promise, resolve, reject) {
         resolve('Please specify a location <*search* tacos *near* Irvine, CA> or set your default location <*set default* your location>');
       }
       var config = {
-        query: message.match[1],
+        query: message.match[1].replace(/--save/, ''),
         location: results[0].location
       }
       resolve(config);
     })
   } else {
-    var text = message.text.match(/search (.*) near (.*)/);
+    var text = message.text.replace(/--save/, '').match(/search (.*) near (.*)/);
     var config = {
       query: text[1],
       location: text[2]
@@ -103,7 +103,8 @@ controller.hears(['search (.*)', 'find (.*)'],
       }
       User.search(message, results);
       var goSearch = new Promise(function(resolveSearch, rejectSearch) {
-        search(goSearch, resolveSearch, rejectSearch, results.query, results.location);
+        var type = message.text.match(/-all/) === null ? 'eat24' : 'standard';
+        search(goSearch, resolveSearch, rejectSearch, results.query, results.location, type);
       })
 
       goSearch.then(function(payload) {
@@ -210,6 +211,8 @@ controller.hears(['menu for (.*)'],
       var restaurant = match(message.match[1], results);
       if (restaurant === false) {
         bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else if (restaurant.eat24 === null) {
+        bot.reply(message, 'Sorry, that restaurant doesn\'t have an Eat24 menu.');
       } else {
         var scrapeMenu = new Promise(function(resolve, reject) {
           menu(scrapeMenu, resolve, reject, restaurant.eat24);

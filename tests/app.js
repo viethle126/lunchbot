@@ -27,7 +27,7 @@ app.use('/reviews', function(req, res) {
 
 app.get('/search', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
-    search(promise, resolve, reject, 'lunch', 'Irvine, CA');
+    search(promise, resolve, reject, 'lunch', 'Irvine, CA', 'eat24');
   })
   promise.then(function(payload) {
     res.send(payload.results);
