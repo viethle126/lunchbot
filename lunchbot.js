@@ -37,6 +37,9 @@ function configSearch(message, promise, resolve, reject) {
     })
 
     find.then(function(results) {
+      if (results.length === 0) {
+        resolve('Please specify a location <*search* tacos *near* Irvine, CA> or set your default location <*set default* your location>');
+      }
       var config = {
         query: message.match[1],
         location: results[0].location
@@ -95,6 +98,9 @@ controller.hears(['search (.*)', 'find (.*)'],
     })
 
     getLocation.then(function(results) {
+      if (typeof results === 'string') {
+        bot.reply(message, results);
+      }
       User.search(message, results);
       var goSearch = new Promise(function(resolveSearch, rejectSearch) {
         search(goSearch, resolveSearch, rejectSearch, results.query, results.location);
