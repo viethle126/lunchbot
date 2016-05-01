@@ -211,6 +211,8 @@ controller.hears(['menu for (.*)'],
       var restaurant = match(message.match[1], results);
       if (restaurant === false) {
         bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else if (restaurant.eat24 === null) {
+        bot.reply(message, 'Sorry, that restaurant doesn\'t have an Eat24 menu.');
       } else {
         var scrapeMenu = new Promise(function(resolve, reject) {
           menu(scrapeMenu, resolve, reject, restaurant.eat24);
