@@ -44,13 +44,14 @@ function configSearch(message, promise, resolve, reject) {
       };
       resolve(config);
     })
+  } else {
+    var text = message.text.replace(/-all/, '').match(/search (.*) near (.*)/);
+    var config = {
+      query: text[1],
+      location: text[2]
+    };
+    resolve(config);
   }
-  var text = message.text.replace(/-all/, '').match(/search (.*) near (.*)/);
-  var config = {
-    query: text[1],
-    location: text[2]
-  };
-  resolve(config);
 }
 
 function match(query, results) {
