@@ -72,6 +72,22 @@ function match(query, results) {
   return restaurant;
 }
 
+controller.hears(['commands', 'help'],
+  context.all, function(bot, message) {
+    var greet = 'I\'m @' + bot.identity.name + '! Give these commands a try:\n';
+    var mention = 'Mention @' + bot.identity.name + ' before a command unless we\'re having a private conversation'
+    var eat24 = '1. Search (to order online): *search* <query> *near* <location>\n';
+    var standard = '2. Search (standard Yelp search): *search* <query> *near* <location> *-all*\n'
+    var location = '3. Set default location: *set default* <location>\n';
+    var note = '-- When searching, your default location is used when location is omitted: *search* <query>\n'
+    var reviews = '4. See reviews: *reviews for* <restaurant name or search index>\n';
+    var menu = '5. See menu: *menu for* <restaurant name or search index>\n';
+    var info = '6. Get number/address: *info* <restaurant name or search index>\n';
+    var uptime = '7. Find out how long I\'ve been awake: *uptime*';
+    var response = greet + mention + eat24 + standard + location + note + reviews + menu + info + uptime;
+    bot.reply(message, response);
+  })
+
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
   context.all, function(bot, message) {
     var current = uptime(process.uptime());
