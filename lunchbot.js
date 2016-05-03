@@ -1,12 +1,7 @@
-// Botkit
-var Botkit = require('botkit');
-var controller = Botkit.slackbot();
-var bot = controller.spawn({
-  token: process.env.SLACK_BOT_TOKEN
-});
-var context = {
-  all: ['direct_message', 'direct_mention', 'mention', 'ambient'],
-  general: ['direct_message', 'direct_mention', 'mention']
+var app = require('./lib/app');
+var controller = app.configure(process.env.PORT, process.env.CLIENT_ID, process.env.CLIENT_SECRET, config, onInstallation);
+var config = {
+  storage: BotkitStorage({ mongoUri: process.env.MLAB_LUNCHBOT_URI })
 };
 // custom modules
 var menu = require('./lib/menu');
@@ -17,15 +12,17 @@ var uptime = require('./lib/uptime');
 var mongoose = require('./lib/mongoose');
 var Channel = require('./lib/channel');
 var User = require('./lib/user');
-// connect to database; start lunchbot
 mongoose.connection.on('error', console.error.bind(console, 'Could not connect to MongoDB'));
-mongoose.connection.once('open', function() {
-  bot.startRTM(function(err, bot, payload) {
-    if (err) {
-      throw new Error('Could not connect to Slack')
-    }
-  })
-})
+
+function onInstallation(bot, installer) {
+  if (installer) {
+    bot.startPrivateConversation({ user: installer }, function(error, convo) {
+      if (!error) {
+        convo.say('@lunchbot successfully installed');
+      }
+    })
+  }
+}
 
 function configSearch(message, promise, resolve, reject) {
   var inReg = /search (.*) in (.*)/i;
@@ -72,6 +69,11 @@ function match(query, results) {
 
   return found === false ? false : restaurant;
 }
+
+var context = {
+  all: ['direct_message', 'direct_mention', 'mention', 'ambient'],
+  general: ['direct_message', 'direct_mention', 'mention']
+};
 
 controller.hears(['commands', 'help'],
   context.all, function(bot, message) {
