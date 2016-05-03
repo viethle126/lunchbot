@@ -19,7 +19,7 @@ config:
     type: secret
     global: true
   - name: MLAB_LUNCHBOT_URI
-    friendly_name: mLab User
+    friendly_name: mLab URI
     type: secret
     global: true
 slackscopes:
