@@ -28,7 +28,9 @@ mongoose.connection.once('open', function() {
 })
 
 function configSearch(message, promise, resolve, reject) {
-  if (message.text.match(/search (.*) near (.*)/) === null) {
+  var inReg = /search (.*) in (.*)/i;
+  var nearReg = /search (.*) near (.*)/i;
+  if (message.text.match(inReg) === null && message.text.match(nearReg) === null ) {
     var find = new Promise(function(findResolve, findReject) {
       User.getLocation(message, find, findResolve, findReject);
     });
@@ -39,13 +41,14 @@ function configSearch(message, promise, resolve, reject) {
       }
 
       var config = {
-        query: message.match[1].replace(/-all/, ''),
+        query: message.match[1].replace(/-all/i, ''),
         location: results[0].location
       };
       resolve(config);
     })
   } else {
-    var text = message.text.replace(/-all/, '').match(/search (.*) near (.*)/);
+    var text = message.text.replace(/-all/i, '');
+    text = text.match(inReg) !== null ? text.match(inReg) : text.match(nearReg);
     var config = {
       query: text[1],
       location: text[2]
