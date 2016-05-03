@@ -2,7 +2,7 @@
   "name": "lunchbot",
   "version": "1.0.0",
   "description": "a Yelp-centric Slack bot",
-  "main": "index.js",
+  "main": "lunchbot.js",
   "scripts": {
     "start": "node lunchbot.js"
   },

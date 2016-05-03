@@ -1,0 +1,35 @@
+name: Lunchbot
+description: a Yelp-centric Slack bot
+avatar: resources/avatar.png
+config:
+  - name: YELP_CONSUMER_KEY
+    friendly_name: Yelp Consumer Key
+    type: secret
+    global: true
+  - name: YELP_CONSUMER_SECRET
+    friendly_name: Yelp Consumer Secret
+    type: secret
+    global: true
+  - name: YELP_ACCESS_TOKEN_KEY
+    friendly_name: Yelp Access Token Key
+    type: secret
+    global: true
+  - name: YELP_ACCESS_TOKEN_SECRET
+    friendly_name: Yelp Access Token Secret
+    type: secret
+    global: true
+  - name: SLACK_BOT_TOKEN
+    friendly_name: Slack Bot Token
+    type: secret
+    global: true
+  - name: MLAB_LUNCHBOT_USER
+    friendly_name: mLab User
+    type: secret
+    global: true
+  - name: MLAB_LUNCHBOT_PASSWORD
+    friendly_name: mLab Password
+    type: secret
+    global: true
+slackscopes:
+  - bot
+  - commands
