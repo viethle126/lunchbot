@@ -4,6 +4,8 @@ var config = {
   storage: storage
 };
 var controller = app.configure(process.env.PORT, process.env.CLIENT_ID, process.env.CLIENT_SECRET, config, onInstallation);
+var BeepBoop = require('beepboop-botkit');
+var beepboop = BeepBoop.start(controller);
 // custom modules
 var menu = require('./lib/menu');
 var reviews = require('./lib/reviews');
