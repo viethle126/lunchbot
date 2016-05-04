@@ -1,9 +1,9 @@
 var app = require('./lib/app');
-var controller = app.configure(process.env.PORT, process.env.CLIENT_ID, process.env.CLIENT_SECRET, config, onInstallation);
-var BotkitStorage = require('./lib/storage');
+var storage = require('./lib/storage');
 var config = {
-  storage: BotkitStorage({ mongoUri: process.env.MLAB_LUNCHBOT_URI })
+  storage: storage
 };
+var controller = app.configure(process.env.PORT, process.env.CLIENT_ID, process.env.CLIENT_SECRET, config, onInstallation);
 // custom modules
 var menu = require('./lib/menu');
 var reviews = require('./lib/reviews');
