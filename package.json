@@ -22,6 +22,7 @@
     "gulp-mocha": "^2.2.0"
   },
   "dependencies": {
+    "beepboop-botkit": "^1.3.0",
     "botkit": "^0.1.1",
     "chai": "^3.5.0",
     "cheerio": "^0.20.0",
