@@ -22,6 +22,14 @@ config:
     friendly_name: mLab URI
     type: secret
     global: true
+  - name: CLIENT_ID
+    friendly_name: Client ID
+    type: secret
+    global: true
+  - name: CLIENT_SECRET
+    friendly_name: Client Secret
+    type: secret
+    global: true
 slackscopes:
   - bot
   - commands
