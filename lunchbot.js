@@ -125,27 +125,29 @@ controller.hears(['search (.*)', 'find (.*)'],
       }
 
       People.search(message, results);
+      var query = results.query;
+      var location = results.location;
       var getResults = new Promise(function(resolveSearch, rejectSearch) {
         var type = message.text.match(/-all/) === null ? 'eat24' : 'standard';
-        search(getResults, resolveSearch, rejectSearch, results.query, results.location, type);
+        search(getResults, resolveSearch, rejectSearch, query, location, type);
       });
 
       getResults.then(function(payload) {
         if (payload.results.length === 0) {
-          var response = 'I couldn\'t find any ' + results.query + ' near ' + results.location;
+          var response = 'I couldn\'t find any ' + query + ' near ' + location;
           bot.reply(message, response);
+        } else {
+          var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
+          var results = payload.results.slice(0, 5).join('\n');
+          var text = header + results;
+          var response = {
+            text: text,
+            unfurl_links: false,
+            unfurl_media: false
+          };
+          bot.reply(message, response);
+          Results.search(message, payload);
         }
-
-        var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
-        var results = payload.results.slice(0, 5).join('\n');
-        var text = header + results;
-        var response = {
-          text: text,
-          unfurl_links: false,
-          unfurl_media: false
-        };
-        bot.reply(message, response);
-        Results.search(message, payload);
       })
     })
   })
@@ -298,12 +300,12 @@ controller.hears(['info (.*)'],
 
       if (restaurant === false) {
         bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+      } else {
+        var name = '*' + restaurant.name + '*';
+        var phone = 'Phone: ' + restaurant.phone;
+        var address = 'Address: ' + restaurant.address;
+        var response = name + '\n' + phone + '\n' + address;
+        bot.reply(message, response);
       }
-
-      var name = '*' + restaurant.name + '*';
-      var phone = 'Phone: ' + restaurant.phone;
-      var address = 'Address: ' + restaurant.address;
-      var response = name + '\n' + phone + '\n' + address;
-      bot.reply(message, response);
     })
   })
