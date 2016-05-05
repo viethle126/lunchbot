@@ -81,7 +81,7 @@ var context = {
 controller.hears(['commands', 'help'],
   context.all, function(bot, message) {
     var greet = 'I\'m @' + bot.identity.name + '! Give these commands a try:\n';
-    var mention = 'Mention @' + bot.identity.name + ' before a command unless we\'re having a private conversation';
+    var mention = 'Mention @' + bot.identity.name + ' before a command unless we\'re having a private conversation\n';
     var eat24 = '1. Search (to order online): *search* <query> *near* <location>\n';
     var standard = '2. Search (standard Yelp search): *search* <query> *near* <location> *-all*\n';
     var location = '3. Set default location: *set default* <location>\n';
@@ -137,7 +137,8 @@ controller.hears(['search (.*)', 'find (.*)'],
           var response = 'I couldn\'t find any ' + query + ' near ' + location;
           bot.reply(message, response);
         } else {
-          var header = 'I found *' + payload.results.length + ' results*. Say *\'more results\'* for more.\n';
+          var header = 'I found *' + payload.results.length + ' results*.';
+          header += payload.results.length > 5 ? ' Say *\'more results\'* for more.\n' : '\n';
           var results = payload.results.slice(0, 5).join('\n');
           var text = header + results;
           var response = {
