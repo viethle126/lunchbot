@@ -3,13 +3,9 @@ var mocha = require('gulp-mocha');
 var eslint = require('gulp-eslint');
 
 var app = require('./tests/app.js');
-var server = '';
+app.listen(1337);
 
-gulp.task('start', function() {
-  server = app.listen(1337);
-})
-
-gulp.task('lint', ['start'], function() {
+gulp.task('lint', function() {
   return gulp.src(['tests/app.js', '!node_modules/**'])
   .pipe(eslint())
   .pipe(eslint.format())
@@ -19,10 +15,9 @@ gulp.task('lint', ['start'], function() {
 gulp.task('mocha', ['lint'], function () {
   return gulp.src('tests/app.spec.js')
   .pipe(mocha())
+  .once('end', function() {
+    process.exit();
+  });
 })
 
-gulp.task('test', ['mocha'], function() {
-  server.close();
-})
-
-gulp.task('default', ['test']);
+gulp.task('default', ['mocha']);
