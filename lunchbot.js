@@ -12,10 +12,8 @@ var reviews = require('./lib/reviews');
 var search = require('./lib/search');
 var uptime = require('./lib/uptime');
 // mongoose
-var mongoose = require('./lib/mongoose');
-var Results = require('./lib/models/results');
-var People = require('./lib/models/people');
-mongoose.connection.on('error', console.error.bind(console, 'Could not connect to MongoDB'));
+var Channel = require('./lib/models/channels');
+var User = require('./lib/models/users');
 
 function onInstallation(bot, installer) {
   if (installer) {
@@ -32,7 +30,7 @@ function configSearch(message, promise, resolve, reject) {
   var nearReg = /search (.*) near (.*)/i;
   if (message.text.match(inReg) === null && message.text.match(nearReg) === null ) {
     var find = new Promise(function(findResolve, findReject) {
-      People.getLocation(message, find, findResolve, findReject);
+      User.getLocation(message, find, findResolve, findReject);
     });
 
     find.then(function(results) {
@@ -69,7 +67,6 @@ function match(query, results) {
       restaurant = element;
     }
   })
-
   return found === false ? false : restaurant;
 }
 
@@ -99,7 +96,7 @@ controller.hears(['uptime', 'who are you', 'what is your name'],
 controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      People.putLocation(promise, resolve, reject, message);
+      User.putLocation(promise, resolve, reject, message);
     });
 
     promise.then(function() {
@@ -119,7 +116,7 @@ controller.hears(['search (.*)', 'find (.*)'],
         bot.reply(message, results);
       }
 
-      People.search(message, results);
+      User.search(message, results);
       var query = results.query;
       var location = results.location;
       var getResults = new Promise(function(resolveSearch, rejectSearch) {
@@ -142,7 +139,7 @@ controller.hears(['search (.*)', 'find (.*)'],
             unfurl_media: false
           };
           bot.reply(message, response);
-          Results.search(message, payload);
+          Channel.search(message, payload);
         }
       })
     })
@@ -151,7 +148,7 @@ controller.hears(['search (.*)', 'find (.*)'],
 controller.hears(['more results'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      Results.moreResults(message, promise, resolve, reject)
+      Channel.moreResults(message, promise, resolve, reject)
     });
 
     promise.then(function(payload) {
@@ -182,7 +179,7 @@ controller.hears(['more results'],
 controller.hears(['reviews for (.*)'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getRestaurants = new Promise(function(getResolve, getReject) {
-      Results.getRestaurants(message, getRestaurants, getResolve, getReject);
+      Channel.getRestaurants(message, getRestaurants, getResolve, getReject);
     });
 
     getRestaurants.then(function(results) {
@@ -201,7 +198,7 @@ controller.hears(['reviews for (.*)'],
         var highlights = payload.highlights.join('\n- ');
         var response = header + highlights;
         bot.reply(message, response);
-        Results.reviews(message, payload);
+        Channel.reviews(message, payload);
       })
     })
   })
@@ -209,7 +206,7 @@ controller.hears(['reviews for (.*)'],
 controller.hears(['more reviews'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      Results.moreReviews(message, promise, resolve, reject)
+      Channel.moreReviews(message, promise, resolve, reject)
     });
 
     promise.then(function(payload) {
@@ -234,7 +231,7 @@ controller.hears(['more reviews'],
 controller.hears(['menu for (.*)'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getRestaurants = new Promise(function(getResolve, getReject) {
-      Results.getRestaurants(message, getRestaurants, getResolve, getReject);
+      Channel.getRestaurants(message, getRestaurants, getResolve, getReject);
     });
 
     getRestaurants.then(function(results) {
@@ -256,7 +253,7 @@ controller.hears(['menu for (.*)'],
         var section = payload[0].join('\n');
         var response = header + section;
         bot.reply(message, response);
-        Results.menu(message, payload);
+        Channel.menu(message, payload);
       })
     })
   })
@@ -264,7 +261,7 @@ controller.hears(['menu for (.*)'],
 controller.hears(['menu next'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      Results.moreMenu(message, promise, resolve, reject)
+      Channel.moreMenu(message, promise, resolve, reject)
     });
 
     promise.then(function(payload) {
@@ -288,7 +285,7 @@ controller.hears(['menu next'],
 controller.hears(['info (.*)'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
-      Results.getRestaurants(message, promise, resolve, reject);
+      Channel.getRestaurants(message, promise, resolve, reject);
     });
 
     promise.then(function(results) {
