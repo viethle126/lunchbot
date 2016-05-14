@@ -73,13 +73,8 @@ function match(query, results) {
   return found === false ? false : restaurant;
 }
 
-var context = {
-  all: ['direct_message', 'direct_mention', 'mention', 'ambient'],
-  general: ['direct_message', 'direct_mention', 'mention']
-};
-
 controller.hears(['commands', 'help'],
-  context.all, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var greet = 'I\'m @' + bot.identity.name + '! Give these commands a try:\n';
     var mention = 'Mention @' + bot.identity.name + ' before a command unless we\'re having a private conversation\n';
     var eat24 = '1. Search (to order online): *search* <query> *near* <location>\n';
@@ -95,14 +90,14 @@ controller.hears(['commands', 'help'],
   })
 
 controller.hears(['uptime', 'who are you', 'what is your name'],
-  context.all, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var current = uptime(process.uptime());
     var reply = 'I am a bot named <@' + bot.identity.name + '>. I have been awake for ' + current;
     bot.reply(message, reply);
   })
 
 controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
       People.putLocation(promise, resolve, reject, message);
     });
@@ -114,7 +109,7 @@ controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
   })
 
 controller.hears(['search (.*)', 'find (.*)'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getLocation = new Promise(function(resolveLocation, rejectLocation) {
       configSearch(message, getLocation, resolveLocation, rejectLocation);
     });
@@ -154,7 +149,7 @@ controller.hears(['search (.*)', 'find (.*)'],
   })
 
 controller.hears(['more results'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
       Results.moreResults(message, promise, resolve, reject)
     });
@@ -185,7 +180,7 @@ controller.hears(['more results'],
   })
 
 controller.hears(['reviews for (.*)'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getRestaurants = new Promise(function(getResolve, getReject) {
       Results.getRestaurants(message, getRestaurants, getResolve, getReject);
     });
@@ -212,7 +207,7 @@ controller.hears(['reviews for (.*)'],
   })
 
 controller.hears(['more reviews'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
       Results.moreReviews(message, promise, resolve, reject)
     });
@@ -237,7 +232,7 @@ controller.hears(['more reviews'],
   })
 
 controller.hears(['menu for (.*)'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getRestaurants = new Promise(function(getResolve, getReject) {
       Results.getRestaurants(message, getRestaurants, getResolve, getReject);
     });
@@ -267,7 +262,7 @@ controller.hears(['menu for (.*)'],
   })
 
 controller.hears(['menu next'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
       Results.moreMenu(message, promise, resolve, reject)
     });
@@ -291,7 +286,7 @@ controller.hears(['menu next'],
   })
 
 controller.hears(['info (.*)'],
-  context.general, function(bot, message) {
+  ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var promise = new Promise(function(resolve, reject) {
       Results.getRestaurants(message, promise, resolve, reject);
     });
