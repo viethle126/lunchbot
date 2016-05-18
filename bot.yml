@@ -31,6 +31,9 @@ config:
     friendly_name: Client Secret
     type: secret
     global: true
+screenshots:
+  - screenshot: resources/help.png
+  - screenshot: resources/search.png
 slackscopes:
   - bot
   - commands
