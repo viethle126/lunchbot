@@ -19,7 +19,7 @@ function onInstallation(bot, installer) {
   if (installer) {
     bot.startPrivateConversation({ user: installer }, function(error, convo) {
       if (!error) {
-        convo.say('@lunchbot successfully installed');
+        convo.say('I have arrived! Please invite me to a channel (or we can be discreet with a direct message). Then, say *\'help\'* to see what I can do.');
       }
     })
   }
@@ -73,16 +73,18 @@ function match(query, results) {
 controller.hears(['commands', 'help'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var greet = 'I\'m @' + bot.identity.name + '! Give these commands a try:\n';
-    var mention = 'Mention @' + bot.identity.name + ' before a command unless we\'re having a private conversation\n';
-    var eat24 = '1. Search (to order online): *search* <query> *near* <location>\n';
-    var standard = '2. Search (standard Yelp search): *search* <query> *near* <location> *-all*\n';
+    var eat24 = '1. Search (to order online): *search* <query> *in* <location>\n';
+    var standard = '2. Search (standard Yelp search): *search* <query> *in* <location> *-all*\n';
     var location = '3. Set default location: *set default* <location>\n';
-    var note = '-- When searching, your default location is used when location is omitted: *search* <query>\n';
+    var noteOne = '-- Your default location is used when a location is omitted: *search* <query>\n';
     var reviews = '4. See reviews: *reviews for* <restaurant name or search index>\n';
     var menu = '5. See menu: *menu for* <restaurant name or search index>\n';
     var info = '6. Get number/address: *info* <restaurant name or search index>\n';
-    var uptime = '7. Find out how long I\'ve been awake: *uptime*';
-    var response = greet + mention + eat24 + standard + location + note + reviews + menu + info + uptime;
+    var uptime = '7. Find out how long I\'ve been awake: *uptime*\n';
+    var noteTwo = '-- For reviews and menus, I use the results of your last search as a reference.\n';
+    var noteThree = '-- I can retrieve reviews for any restaurant but I can only get menus for restaurants with an Eat24 portal.\n'
+    var noteFour = '-- Example: 1. Pizza Port -- you can say *\'reviews for pizza port\'* or *\'reviews for 1\'*\n';
+    var response = greet + eat24 + standard + location + noteOne + reviews + menu + info + uptime + noteTwo + noteThree + noteFour;
     bot.reply(message, response);
   })
 
@@ -185,7 +187,13 @@ controller.hears(['reviews for (.*)'],
     getRestaurants.then(function(results) {
       var restaurant = match(message.match[1], results);
       if (restaurant === false) {
-        bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+        var apology = 'Sorry, I couldn\'t find that restaurant...\n'
+        var note = 'For reviews and menus, I use the results of your last search as a reference.\n';
+        var scrape = 'I can retrieve reviews for any restaurant but I can only get menus for restaurants with an Eat24 portal.\n'
+        var example = '-- Example: 1. Pizza Port -- you can say *\'reviews for pizza port\'* or *\'reviews for 1\'*';
+        var response = apology + note + scrape + example;
+
+        bot.reply(message, response);
       }
 
       var scrapeReviews = new Promise(function(resolveScrape, rejectScrape) {
@@ -220,7 +228,7 @@ controller.hears(['more reviews'],
 
       var review = '';
       if (payload.sent <= payload.total) {
-        review = '*' + payload.reviews[index].author + '* says:\n' + payload.reviews[index].content;
+        review = '*' + payload.reviews[index].author + '* says: *' + payload.reviews[index].rating + '* :star:\n' + payload.reviews[index].content;
       }
 
       var response = header + review;
@@ -237,7 +245,13 @@ controller.hears(['menu for (.*)'],
     getRestaurants.then(function(results) {
       var restaurant = match(message.match[1], results);
       if (restaurant === false) {
-        bot.reply(message, 'Sorry, that restaurant isn\'t in my database.');
+        var apology = 'Sorry, I couldn\'t find that restaurant...\n'
+        var note = 'For reviews and menus, I use the results of your last search as a reference.\n';
+        var scrape = 'I can retrieve reviews for any restaurant but I can only get menus for restaurants with an Eat24 portal.\n'
+        var example = '-- Example: 1. Pizza Port -- you can say *\'reviews for pizza port\'* or *\'reviews for 1\'*';
+        var response = apology + note + scrape + example;
+
+        bot.reply(message, response);
       }
       if (restaurant.eat24 === null) {
         bot.reply(message, 'Sorry, that restaurant doesn\'t have an Eat24 menu.');
