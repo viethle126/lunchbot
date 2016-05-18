@@ -14,7 +14,7 @@ Questions? Contact me at lunchbotdev@gmail.com
 **Commands:**
 
 
-* search :pizza: near Irvine, CA
+* search :pizza: in Irvine, CA
 * set location Irvine, CA
   * _then:_ search sushi
 * reviews for Taco Shop
