@@ -10,7 +10,7 @@
 * User can request the number and address for a restaurant
 
 **Commands:**
-* search :pizza: near Irvine, CA
+* search :pizza: in Irvine, CA
 * set location Irvine, CA
   * _then:_ search sushi
 * reviews for Taco Shop
@@ -22,4 +22,4 @@
 
 * @lunchbot only returns restaurants with an Eat24 portal by default. To perform a standard search including restaurants without an Eat24 portal, append _**-all**_ to the end of your search.
 
-![lunchbot-search-blur](https://cloud.githubusercontent.com/assets/16697731/14793292/3bede79c-0ad3-11e6-9e88-4eb2b3fdf11e.jpg)
+<img width="1441" alt="search" src="https://cloud.githubusercontent.com/assets/16697731/15363198/c5dd6134-1ccc-11e6-93be-daa84e560b4f.png">

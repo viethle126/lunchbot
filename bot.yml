@@ -1,5 +1,5 @@
 name: Lunchbot
-description: Got a hungry team? Need to order lunch? Lunchbot can help! Lunchbot allows users to perform Yelp searches on Slack. By default, it returns restaurants with an Eat24 (online ordering) portal. Search for restaurants (make sure to argue with your team when deciding on a restaurant) and then order that five pound breakfast burrito you've been saving calories all week for. After installing, say 'help' to see a list of commands!
+description: Got a hungry team? Need to order lunch? Lunchbot can help! Lunchbot allows users to perform Yelp searches on Slack. By default, it returns restaurants with an Eat24 (online ordering) portal. Search for restaurants (make sure to argue with your team when deciding on a restaurant) and then order that five pound breakfast burrito you've been saving calories all week for. After installing, invite Lunchbot to a channel and say 'help' to see a list of commands!
 avatar: resources/avatar.png
 background: resources/background.jpeg
 config:
@@ -31,6 +31,9 @@ config:
     friendly_name: Client Secret
     type: secret
     global: true
+screenshots:
+  - screenshot: resources/help.png
+  - screenshot: resources/search.png
 slackscopes:
   - bot
   - commands
