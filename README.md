@@ -22,4 +22,4 @@
 
 * @lunchbot only returns restaurants with an Eat24 portal by default. To perform a standard search including restaurants without an Eat24 portal, append _**-all**_ to the end of your search.
 
-<img width="1441" alt="search" src="https://cloud.githubusercontent.com/assets/16697731/15363198/c5dd6134-1ccc-11e6-93be-daa84e560b4f.png">
+<img width="1437" alt="search" src="https://cloud.githubusercontent.com/assets/16697731/15365854/ae9201b0-1cd6-11e6-846c-3e551d61b6eb.png">
