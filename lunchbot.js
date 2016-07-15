@@ -107,7 +107,7 @@ controller.hears(['set default (.*)', 'set home (.*)', 'set location (.*)'],
     })
   })
 
-controller.hears(['search (.*)', 'find (.*)'],
+controller.hears(['search (.*)'],
   ['direct_message', 'direct_mention', 'mention', 'ambient'], function(bot, message) {
     var getLocation = new Promise(function(resolveLocation, rejectLocation) {
       configSearch(message, getLocation, resolveLocation, rejectLocation);
@@ -142,6 +142,14 @@ controller.hears(['search (.*)', 'find (.*)'],
           };
           bot.reply(message, response);
           Channel.search(message, payload);
+        }
+      }).catch(function(payload) {
+        if (payload.statusCode === 400) {
+          var response = 'Sorry, Yelp thinks \'' + location + '\' isn\'t a valid location!';
+          bot.reply(message, response);
+        } else {
+          var response = 'Got an error from Yelp: statusCode ' + payload.statusCode;
+          bot.reply(message, response);
         }
       })
     })
