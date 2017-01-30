@@ -16,6 +16,9 @@
     "url": "https://github.com/viethle126/lunchbot/issues"
   },
   "homepage": "https://github.com/viethle126/lunchbot#readme",
+  "engines": {
+    "node": ">=6.x"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.2.0"

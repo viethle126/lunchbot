@@ -1,4 +1,4 @@
-FROM node:4.4.3-onbuild
+FROM node:6.9.4-onbuild
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
