@@ -1,50 +1,37 @@
 // @lunchbot-dev: Mocha/Travis Testing
-var express = require('express');
-var app = express();
+const express = require('express')
+const app = express()
 // routes
-var menu = require('../lib/menu');
-var reviews = require('../lib/reviews');
-var search = require('../lib/search');
-var uptime = require('../lib/uptime');
+const menu = require('../lib/menu')
+const reviews = require('../lib/reviews')
+const search = require('../lib/search')
+const uptime = require('../lib/uptime')
 
-app.use('/menu', function(req, res) {
-  var promise = new Promise(function(resolve, reject) {
-    menu(promise, resolve, reject, 'http://irvine.eat24hours.com/gina-s-pizza-pastaria/43934');
-  })
-  promise.then(function(payload) {
-    res.send(payload);
-  })
-})
+app.use('/menu', (req, res) =>
+  menu('http://irvine.eat24hours.com/gina-s-pizza-pastaria/43934')
+    .then(results => res.send(results))
+)
 
-app.use('/reviews', function(req, res) {
-  var promise = new Promise(function(resolve, reject) {
-    reviews(promise, resolve, reject, 'https://www.yelp.com/biz/ginas-pizza-and-pastaria-irvine');
-  })
-  promise.then(function(payload) {
-    res.send(payload);
-  })
-})
+app.use('/reviews', (req, res) =>
+  reviews('https://www.yelp.com/biz/ginas-pizza-and-pastaria-irvine')
+    .then(results => res.send(results))
+)
 
-app.get('/search', function(req, res) {
-  var promise = new Promise(function(resolve, reject) {
-    search(promise, resolve, reject, 'lunch', 'Irvine, CA', 'eat24');
-  })
-  promise.then(function(payload) {
-    res.send(payload.results);
-  })
-})
+app.get('/search', (req, res) =>
+  search('lunch', 'Irvine, CA', 'eat24')
+    .then(results => res.send(results))
+)
 
-app.get('/uptime', function(req, res) {
-  var current = uptime(process.uptime());
-  res.send('@lunchbot-dev has been awake for ' + current);
-})
+app.get('/uptime', (req, res) =>
+  res.send(`@lunchbot-dev has been awake for ${uptime(process.uptime())}`)
+)
 
-app.use(express.static('./'));
+app.use(express.static('./'))
 
 if (!require.main.loaded) {
-  var port = process.env.PORT || 1337;
-  var server = app.listen(port);
-  console.log('@lunchbot-dev is listening on port: ' + port)
+  const port = process.env.PORT || 1337
+  const server = app.listen(port);
+  console.log(`@lunchbot-dev is listening on port: ${port}`)
 }
 
-module.exports = app;
+module.exports = app
