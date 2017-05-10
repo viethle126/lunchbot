@@ -44,15 +44,17 @@ const configSearch = message => {
       })
   }
 
-  let text = message.text.replace(/-all/i, '')
-  text = text.match(inReg) !== null ? text.match(inReg) : text.match(nearReg)
+  else return new Promise((resolve, _) => {
+    let text = message.text.replace(/-all/i, '')
+    text = text.match(inReg) !== null ? text.match(inReg) : text.match(nearReg)
 
-  let config = {
-    query: text[1],
-    location: text[2]
-  }
+    let config = {
+      query: text[1],
+      location: text[2]
+    }
 
-  return config
+    resolve(config)
+  })
 }
 
 const match = (query, results) => {
